@@ -1,44 +1,3 @@
-/*
- ******************************************************************************
- *
- *  fileName    :   SudokuSolver.cc
- *
- *  Author      :   Aniket Awati <an.aaasss@gmail.com>
- *  Modified By :   Aditya Shevade <aditya.shevade@gmail.com>
- *
- *  Version     :   2.0.0
- *  Created     :   10/11/2009
- *  Modified    :   12/06/2011
- *
- *  Description :   This class solves SuDoKu puzzles. It receives a 2D array
- *                  during initialization (via constructor). The empty cells
- *                  in the puzzle can have any random value. The class will
- *                  ignore them while reading the input.
- *
- *                  The constructor itself calls the initialization methods
- *                  followed by the solvers and finally writes the input array
- *                  (using a reference call - does not return anything).
- *
- *  License     :   This program is free software: you can redistribute it and/or modify
- *                  it under the terms of the GNU General Public License as published by
- *                  the Free Software Foundation, either version 3 of the License, or
- *                  (at your option) any later version.
- *
- *                  This program is distributed in the hope that it will be useful,
- *                  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *                  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *                  GNU General Public License for more details.
- *
- *                  You should have received a copy of the GNU General Public License
- *                  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *  Changelog   :
- *      12/06/2011  :   Added license.
- *                      Cleaned up the code.
- *
- ******************************************************************************
- */
-
 #include <iostream>
 #include <cstdio>
 #include <cstring>
@@ -97,11 +56,6 @@ class SudokuSolver {
             }
         }
     }
-
-    /*  This function makes all the cells of the main problem matrix zero.
-     *  It is not really required if the input to the class already has
-     *  zeroes in place instead of empty / garbage cells.
-     */
     void initPuzzle (void) {
         for (int j = 0; j < NUM; j++) {
             for (int k = 0; k < NUM; k++) {
@@ -110,22 +64,13 @@ class SudokuSolver {
         }
     }
 
-    /*  After reading the input puzzle, call this function. This function
-     *  goes through the problem matrix and calls the assignTag method that
-     *  sets the proper tags to true.
-     */
     void fillTags (void) {
         for (int i = 0; i < NUM; i++)
             for (int j = 0; j < NUM; j++)
                 assignTag (i, j, problemMatrix[i][j]);
     }
 
-    /*  This function checks if the input value 'c' can be placed inside the
-     *  problem matrix at the [i][j] position. The way this works is, the tags
-     *  of the cells that are already filled are set to true. If the value 'c'
-     *  is being written at a place [i][j] where it has no conflicts with the
-     *  row, column or the block then it is valid and method returns true.
-     */
+
     bool checkValid (int i, int j, int c) {
         c--;
         if (tagRow[i][c] == true)
@@ -137,10 +82,6 @@ class SudokuSolver {
         return true;
     }
 
-    /*  This method is used to set the tags to true. Once it's determined that
-     *  a value is valid (using the checkValid method, this method should be
-     *  called. It will set the proper tags for the next checking.
-     */
     void assignTag (int i, int j, int n) {
         if (n == 0)
             return;
@@ -150,12 +91,7 @@ class SudokuSolver {
         tagBlk[(i/BLK)*BLK+j/BLK][n] = true;
     }
 
-    /*  This method is used for the backtracking. Once the logical solving is
-     *  done the class goes into backtracking mode. It sets a random valid value
-     *  and tries to solve the puzzle. If it gives an error, the solver needs to
-     *  go back (backtrack). This also means it needs to reset the tags which
-     *  were set during the initial backtrack assumption.
-     */
+   
     void resetTag (int i, int j, int n) {
         if (n == 0)
             return;
@@ -165,25 +101,14 @@ class SudokuSolver {
         tagBlk[(i/BLK)*BLK+j/BLK][n] = false;
     }
 
-    /*  This method is just a placeholder for different solving mechanisms. The
-     *  puzzles can have various difficulties and solver may need more methods.
-     *  Those algorithms would be called through this method. Mainly for future
-     *  use.
-     */
+   
     bool solvePuzzle(void) {
         solveLogical ();
         //printPuzzle();
         return solveBacktrack (0, 0, problemMatrix);
     }
 
-    /*  This method tries to solve the puzzle logically. It's a simple set of
-     *  implication rules. It goes on checking in each block, row and then
-     *  column to check if there are any singles (cells where only one value
-     *  can be put). If it finds such cells then it assigns the value.
-     *
-     *  The method is in an infinite loop. Until it does not have any value to
-     *  assign to any cell it stays in the loop otherwise it breaks out.
-     */
+   
     void solveLogical (void) {
         int i, j, k, l = 0, row = 0, col = 0, cnt = 0;
         bool flagNotSingle = false; // Used to check if the cell is indeed a singles cell.
@@ -271,23 +196,6 @@ class SudokuSolver {
         }
     }
 
-    /*  This method is called after the logical solver. This method can be
-     *  directly called to solve the puzzles also but that has a problem.
-     *
-     *  Some puzzles are designed such that backtrack solvers take a long
-     *  time to solve them. (Google for more information). The logical solver
-     *  removed some of the issues from that and makes solving faster.
-     *
-     *  For simple puzzles, logical solve will give the result and this method
-     *  will just exit on initial check.
-     *
-     *  The method is simple, it is similar to logical solve but instead of
-     *  checking if the value is singles or not, it only checks if the value
-     *  is valid, if it is then the solver assumes that to be the correct value
-     *  and advances, if it encounters an error, it goes back to last modified
-     *  cell and checks for another valid value. If there is none it goes back
-     *  another step and so on till all the cells are filled.
-     */
     bool solveBacktrack (int i, int j, int proMat [9][9]) {
         if (i == NUM) { // This function goes checking row after row.
             i = 0;
@@ -312,10 +220,7 @@ class SudokuSolver {
         return false;
     }
 
-    /*  This method is used to print the problem matrix to console. Mainly used
-     *  for debugging purpose.
-     */
-    void printPuzzle (void) {
+       void printPuzzle (void) {
         cout << "-------------------------------------------------------" << endl;
         for (int row = 0; row < NUM; row++) {
             cout << "| ";
