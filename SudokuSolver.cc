@@ -43,10 +43,7 @@ class SudokuSolver {
         }
     }
 
-    /*  This function initializes all the tags to false (as in empty). The tags
-     *  are later used to determine if a number is valid in a row, column or
-     *  block. Whenever the number is filled, the corresponding tags are set.
-     */
+   
     void initTag (void) {
         for (int j = 0; j < NUM; j++) {
             for (int k = 0; k < NUM; k++) {
